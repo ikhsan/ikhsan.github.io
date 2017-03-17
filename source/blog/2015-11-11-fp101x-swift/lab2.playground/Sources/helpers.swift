@@ -1,6 +1,6 @@
 // MARK: Helpers
 
-let creditCards = [
+public let creditCards = [
     4716347184862961,
     4532899082537349,
     4485429517622493,
@@ -123,24 +123,26 @@ let creditCards = [
     345763240913232
 ]
 
-func eval(digits: [Int]) -> Int {
-    return digits.reduce(0, combine: { initValue, digit in
-        digit + (initValue * 10)
+public func eval(_ digits: [Int]) -> Int {
+    return digits.reduce(0, { result, digit in
+        return digit + (result * 10)
     })
 }
 
-func evalRev(digits: [Int]) -> Int {
+public func evalRev(_ digits: [Int]) -> Int {
     var result = 0
-    for index in (digits.count-1).stride(through: 0, by: -1) {
+
+    for index in stride(from: (digits.count-1), through: 0, by: -1) {
         result = (result * 10) + digits[index]
     }
+
     return result
 }
 
-extension SequenceType {
-    public func all(@noescape validateElement: (Self.Generator.Element) -> Bool) -> Bool {
-        return self.reduce(true) { initial, element in
-            return initial && validateElement(element)
+extension Sequence {
+    public func all(_ validateElement: (Self.Iterator.Element) -> Bool) -> Bool {
+        return self.reduce(true) { result, element in
+            return result && validateElement(element)
         }
     }
 }
