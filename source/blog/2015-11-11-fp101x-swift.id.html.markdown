@@ -17,25 +17,26 @@ Berikut kutipan dari latihan lab2.hs yang saya tulis kembali dengan Swift
 ```swift
 
 // Helpers
-func eval(digits: [Int]) -> Int {
-    return digits.reduce(0, combine: { initValue, digit in
-        digit + (initValue * 10)
+public func eval(_ digits: [Int]) -> Int {
+    return digits.reduce(0, { result, digit in
+        return digit + (result * 10)
     })
 }
 
-func evalRev(digits: [Int]) -> Int {
-    // menggunakan reversed iterator karena tidak ada foldr di swift
+public func evalRev(_ digits: [Int]) -> Int {
     var result = 0
-    for index in (digits.count-1).stride(through: 0, by: -1) {
+
+    for index in stride(from: (digits.count-1), through: 0, by: -1) {
         result = (result * 10) + digits[index]
     }
+
     return result
 }
 
-extension SequenceType {
-    public func all(@noescape validateElement: (Self.Generator.Element) -> Bool) -> Bool {
-        return self.reduce(true) { initial, element in
-            return initial && validateElement(element)
+extension Sequence {
+    public func all(_ validateElement: (Self.Iterator.Element) -> Bool) -> Bool {
+        return self.reduce(true) { result, element in
+            return result && validateElement(element)
         }
     }
 }
@@ -61,7 +62,7 @@ func numValid(digits: [Int]) -> Int {
 }
 ```
 
-Versi lengkapnya latihan ini bisa diunduh sebagai playground : [Lab2.playground](2015-11-11-fp101x-swift/lab2.playground.zip). Playground-nya sudah diformat sedemikian rupa dengan markdown, jadi lebih rapi aja gitu. Playground dibuat dengan Xcode 7.1 dan Swift 2.0.
+Versi lengkapnya latihan ini bisa diunduh sebagai playground : [Lab2.playground](2015-11-11-fp101x-swift/lab2.playground.zip). Playground-nya sudah diformat sedemikian rupa dengan markdown, jadi lebih rapi aja gitu. Playground dibuat dengan Xcode 8.2.1 and Swift 3.0.
 
 ![playground](blog/2015-11-11-fp101x-swift/playground.png "Playground in Xcode")
 
@@ -69,8 +70,57 @@ Versi lengkapnya latihan ini bisa diunduh sebagai playground : [Lab2.playground]
 
 Kalau tertarik untuk mengecek latihan aslinya dalam haskell, bisa dilihat di [sini](2015-11-11-fp101x-swift/lab2.hs).
 
-## Solusi
+## Pembaruan: Solusi 1.5 tahun kemudian!
 
-Rencananya adalah menulis ulang semua latihan dari FP101x menjadi Swift playground dan setiap melewati _deadline_ akan saya posting solusinya. Jadi nanti balik lagi ya setelah _deadline_-nya lewat untuk berdiskusi dan membandingkan solusi-solusi yang kita temui.
+```swift
+// Ex. 0
+func toDigits(digit: Int) -> [Int] {
+  if case 0..<10 = digit {
+    return [digit]
+  } else {
+    return toDigits(digit / 10) + [digit % 10]
+  }
+}
 
-Seperti yang selalu dikatakan Erik di kelasnya, happy hacking! 🤓
+// Ex. 1
+func toDigitsRev(digit: Int) -> [Int] {
+  return toDigits(digit).reversed()
+}
+
+// Ex. 2
+func doubleSecond(digits: [Int]) -> [Int] {
+  let isEven : (Int) -> Bool = { x in x % 2 == 0 }
+  return digits.enumerated().map { index, x in isEven(index + 1) ? x * 2 : x }
+}
+
+// Ex. 3
+
+// Menambahkan fungsi bantuan untuk mempermudah mendapatkan head dan tail
+// ref: http://chris.eidhof.nl/post/swift-tricks/
+extension Array {
+  func match() -> (head: Element, tail: [Element])? {
+    guard !isEmpty else {
+      return nil
+    }
+    return ( first!, Array(dropFirst()) )
+  }
+}
+
+func sumDigits(digits: [Int]) -> Int {
+  guard let (head, tail) = digits.match() else {
+    return 0
+  }
+  return toDigits(head).reduce(0, +) + sumDigits(tail)
+}
+
+// Ex. 4
+func isValid(digit: Int) -> Bool {
+  return sumDigits(doubleSecond(toDigitsRev(digit))) % 10 == 0
+}
+
+// Ex. 5
+func numValid(digits: [Int]) -> Int {
+    return digits.filter(isValid).count
+}
+```
+Latihan yang sangat seru dan menantang! 💪
