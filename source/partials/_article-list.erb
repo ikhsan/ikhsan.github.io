@@ -1,5 +1,5 @@
 <ul>
-  <% blog.local_articles.each do |article| %>
+  <% articles.each do |article| %>
     <li>
         <%= link_to article.title, article %>
         <span class="article-link"><%= article.date.strftime('%e.%b %Y') %></span>

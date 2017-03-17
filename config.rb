@@ -24,7 +24,7 @@ activate :blog do |blog|
   blog.layout = "blog"
   blog.summary_length = 250
   blog.tag_template = "tag.html"
-  blog.calendar_template = "calendar.html"
+  blog.calendar_template = nil
 
   # blog.paginate = true
   # blog.per_page = 5

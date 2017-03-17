@@ -1,21 +1,5 @@
----
-pageable: true
-per_page: 12
----
+<% articles = blog.tags[tagname].select { |blog| blog.lang == lang  } %>
+
 <h1><%= t(:articles_tagged) %> '<%= tagname %>'</h1>
 
-<% if paginate && num_pages > 1 %>
-  <p>Page <%= page_number %> of <%= num_pages %></p>
-
-  <% if prev_page %>
-    <p><%= link_to 'Previous page', prev_page %></p>
-  <% end %>
-<% end %>
-
-<%= partial "partials/article-list", :locals => { :articles => page_articles } %></li>
-
-<% if paginate %>
-  <% if next_page %>
-    <p><%= link_to 'Next page', next_page %></p>
-  <% end %>
-<% end %>
+<%= partial "partials/article-list", :locals => { :articles => articles } %></li>
