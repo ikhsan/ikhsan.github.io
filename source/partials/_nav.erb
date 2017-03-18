@@ -1,21 +1,13 @@
-<%
-  is_article = (current_article != nil)
-  link_id = is_article ? current_article.url.gsub('/en/', '/id/') : "/id"
-  link_en = is_article ? current_article.url.gsub('/id/', '/en/') : "/#"
-%>
-
-<%=  %>
-
 <nav>
   <h1 class="blog-title"><%= link_to "Codeage", "/" %></h1>
   <p class="blog-description">
     Pardon my ramblings about code and such
   </p>
   <div class="blog-lang">
-    <% if I18n.locale == :en %>
-    <strong>English</strong> / <%= link_to "Bahasa", link_id %>
-    <% elsif I18n.locale == :id %>
-    <%= link_to "English", link_en %> / <strong>Bahasa</strong>
+    <% if current_lang == :en %>
+    <strong>English</strong> / <a href="<%= localise_current_link(:id) %>">Bahasa Indonesia</a>
+    <% elsif current_lang == :id %>
+    <a href="<%= localise_current_link(:en) %>">English</a> / <strong>Bahasa Indonesia</strong>
     <% end %>
   </div>
 </nav>

@@ -25,9 +25,48 @@ end
 
 page "/feed.xml", layout: false
 
-###
+#########
 # Helpers
-###
+#########
+
+helpers do
+  def current_lang
+    current_page.metadata[:locals][:lang]
+  end
+
+  def is_tag_page
+    current_page.metadata[:locals]["page_type"] == "tag"
+  end
+
+  def localise_current_link(target_lang)
+    return localise_current_article_link(target_lang) if article?
+
+    source_page_path = current_page.path
+    source_page_path = "index.html" if is_tag_page
+    page = default_lang?(current_lang) ? source_page_path : source_page_path.gsub("#{current_lang}/", "")
+    page = page.gsub("index.html", "")
+    localise_page_link(page, target_lang)
+  end
+
+  def localise_page_link(page, target_lang)
+    lang = default_lang?(target_lang) ? "" : "#{target_lang}/"
+    "/#{lang}#{page}"
+  end
+
+  private
+  def default_lang? lang
+    lang == I18n.default_locale
+  end
+
+  def article?
+    !current_article.nil?
+  end
+
+  def localise_current_article_link(target_lang)
+    source_lang = current_lang
+    current_article.url.gsub("/#{current_lang}/", "/#{target_lang}/")
+  end
+end
 
 # Reload the browser automatically whenever files change
 activate :livereload

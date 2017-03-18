@@ -21,6 +21,12 @@ nav {
 
   .blog-lang {
     font-size: 13px;
+    text-transform: uppercase;
     color: $medium-gray;
+
+    strong {
+      color: $medium-gray;
+      font-weight: bold;
+    }
   }
 }
