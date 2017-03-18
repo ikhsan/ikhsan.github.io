@@ -1,5 +1,5 @@
-<% articles = blog.tags[tagname].select { |blog| blog.lang == lang  } %>
-
 <h1><%= t(:articles_tagged) %> '<%= tagname %>'</h1>
 
-<%= partial "partials/article-list", :locals => { :articles => articles } %></li>
+<%= partial "partials/article-list", :locals => {
+  :articles => blog.tags[tagname].select { |blog| blog.lang == lang }
+} %>

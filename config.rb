@@ -13,11 +13,7 @@ activate :blog do |blog|
   blog.permalink = "{lang}/{title}.html"
   blog.sources = "{year}-{month}-{day}-{title}.{lang}.html"
 
-  # blog.taglink = "tags/{tag}.html"
-  # blog.summary_separator = /(READMORE)/
-  # blog.year_link = "{year}.html"
-  # blog.month_link = "{year}/{month}.html"
-  # blog.day_link = "{year}/{month}/{day}.html"
+  blog.taglink = "tags/{tag}.html"
   # blog.default_extension = ".markdown"
 
   blog.prefix = "blog"
@@ -25,10 +21,6 @@ activate :blog do |blog|
   blog.summary_length = 250
   blog.tag_template = "tag.html"
   blog.calendar_template = nil
-
-  # blog.paginate = true
-  # blog.per_page = 5
-  # blog.page_link = "page/{num}"
 end
 
 page "/feed.xml", layout: false
@@ -42,7 +34,6 @@ activate :livereload
 
 set :css_dir, 'stylesheets'
 set :js_dir, 'javascripts'
-set :images_dir, "img"
 
 # Build-specific configuration
 configure :build do
