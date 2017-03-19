@@ -2,12 +2,13 @@
 
 @import url(http://fonts.googleapis.com/css?family=PT+Sans|Nunito:300,400);
 
-@import "bourbon";
-@import "base/base";
-@import "neat";
+// @import "bourbon";
+// @import "base/base";
+// @import "neat";
+@import "variables";
 
 #main {
-  @include outer-container;
+  // @include outer-container;
 
   .footnotes {
     hr { display: none; }
@@ -16,11 +17,13 @@
 
 .article-links {
   margin-top: 1em;
-  @include outer-container;
+  // @include outer-container;
 
-  .previous-link { @include span-columns(6); }
+  .previous-link {
+    // @include span-columns(6);
+  }
   .next-link {
-    @include span-columns(6);
+    // @include span-columns(6);
     text-align: right;
   }
 }

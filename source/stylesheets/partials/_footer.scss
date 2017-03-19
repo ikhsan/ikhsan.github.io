@@ -11,14 +11,14 @@ footer {
   }
 
   .footer-bar {
-    @include outer-container;
+    // @include outer-container;
 
     .recent {
-      @include span-columns(7);
+      // @include span-columns(7);
     }
 
     .tags {
-      @include span-columns(5);
+      // @include span-columns(5);
 
       li.tag {
         display: inline;
