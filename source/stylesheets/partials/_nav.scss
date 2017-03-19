@@ -1,32 +1,35 @@
 nav {
   text-align: center;
-  // @include padding(30px null null null);
-  margin-bottom: 2em;
+  margin: 2em 0 1em;
 
   .blog-title {
-    font-size: golden-ratio(40px,  1);;
+    font-size: 3.5em;
     text-transform: capitalize;
     margin: 0;
-
-    a {
-      padding: 0 0.2em;
-    }
+    font-weight: bold;
   }
 
   p.blog-description {
-    margin-top: -0.3em;
-    margin-bottom: 0;
+    font-size: 0.9em;
+    margin: -0.2em auto 0;
     color: $medium-gray;
   }
 
   .blog-lang {
-    font-size: 13px;
+    font-size: 1em;
     text-transform: uppercase;
     color: $medium-gray;
+  }
 
-    strong {
-      color: $medium-gray;
-      font-weight: bold;
+  @media (min-width: $base-breakpoint) {
+    .blog-title {
+      font-size: 4.5em;
     }
+
+    p.blog-description {
+      margin: 0 auto;
+      font-size: 1em;
+    }
+
   }
 }
