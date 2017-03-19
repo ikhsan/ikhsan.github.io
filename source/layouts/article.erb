@@ -14,7 +14,7 @@
 
     <div id="main" role="main">
       <%= partial "partials/nav" %>
-      
+
       <article>
         <h1><%= current_article.title %></h1>
         <%= yield %>
@@ -25,7 +25,7 @@
       </article>
 
       <%= partial "partials/article-links", :locals => { :articles => blog.local_articles, :article => current_article } %>
-      <%= partial "partials/blog-footer" %>
+      <%= partial "partials/footer" %>
     </div>
 
     <%= partial "partials/tracker" %>
