@@ -1,8 +1,8 @@
-<h1><%= t(:all_articles) %></h1>
+<div class="article-list">
+  <h1><%= t(:all_articles) %></h1>
 
-<% blog.local_articles.group_by { |a| a.date.year }.each do |year, items| %>
-
-<h3><%= year %></h3>
-<%= partial "partials/article-list", :locals => { :articles => items } %>
-
-<% end %>
+  <% blog.local_articles.group_by { |a| a.date.year }.each do |year, items| %>
+  <h2><%= year %></h2>
+  <%= partial "partials/article-list", :locals => { :articles => items } %>
+  <% end %>
+</div>
