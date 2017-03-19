@@ -7,10 +7,7 @@
         <%= article.summary %><%= link_to t(:read_more) + " &rarr;", article %>
 
         <div class="metadata">
-          <div class="date">
-            <%= link_to article.date.strftime('%b.%e %Y'), article %>
-          </div>
-
+          <div class="date"><%= link_to article.date.strftime('%b.%e %Y'), article %></div>
           <%= partial "partials/tags", :locals => { :tags => article.tags } %>
         </div>
       </article>
