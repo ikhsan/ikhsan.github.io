@@ -38,18 +38,6 @@ img {
   height: auto;
 }
 
-.article-links {
-  margin-top: 1em;
-
-  .previous-link {
-
-  }
-  .next-link {
-
-    text-align: right;
-  }
-}
-
 @media (min-width: $base-breakpoint) {
   #main {
     margin: 0 auto;

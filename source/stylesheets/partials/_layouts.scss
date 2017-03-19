@@ -102,6 +102,21 @@ span.article-link {
   margin-left: 0.5em;
 }
 
+.article-links {
+  margin-top: 1em;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  font-size: 0.95em;
+
+  .previous-link {
+  }
+
+  .next-link {
+    text-align: right;
+  }
+}
+
 
 @media (min-width: $base-breakpoint) {
   .all-articles {
