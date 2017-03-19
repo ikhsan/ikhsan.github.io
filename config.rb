@@ -17,13 +17,14 @@ activate :blog do |blog|
   # blog.default_extension = ".markdown"
 
   blog.prefix = "blog"
-  blog.layout = "blog"
+  blog.layout = "article"
   blog.summary_length = 250
   blog.tag_template = "tag.html"
   blog.calendar_template = nil
 end
 
 page "/feed.xml", layout: false
+page "/id/feed.xml", layout: false
 
 #########
 # Helpers

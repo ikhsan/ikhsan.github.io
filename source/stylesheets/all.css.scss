@@ -1,27 +1,46 @@
 @charset "utf-8";
 
-@import url(http://fonts.googleapis.com/css?family=PT+Sans|Nunito:300,400);
+@import url(http://fonts.googleapis.com/css?family=PT+Sans:400,700|Nunito:400,800);
+@import "variables";
 
-@import "bourbon";
-@import "base/base";
-@import "neat";
+body {
+  font-family: $base-font-family;
+  font-size: $base-font-size;
+  line-height: $base-line-height;
+  color: $base-font-color;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $heading-font-family;
+  line-height: $heading-line-height;
+}
+
+a {
+  color: $action-color;
+  text-decoration: none;
+}
+
+a:hover {
+  background-color: $yellow-marker;
+}
 
 #main {
-  @include outer-container;
+  padding: 0 1em;
+  max-width: 50em;
 
   .footnotes {
     hr { display: none; }
   }
 }
 
-.article-links {
-  margin-top: 1em;
-  @include outer-container;
+img {
+  max-width: 100%;
+  height: auto;
+}
 
-  .previous-link { @include span-columns(6); }
-  .next-link {
-    @include span-columns(6);
-    text-align: right;
+@media (min-width: $base-breakpoint) {
+  #main {
+    margin: 0 auto;
   }
 }
 

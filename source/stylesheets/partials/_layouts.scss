@@ -4,11 +4,22 @@
 
 article {
 
-  padding: 2em 0;
+  padding: 1em 0;
   border-bottom: $base-border;
+
+  h1 {
+    text-align: center;
+    text-transform: uppercase;
+  }
 
   h1 > a {
     border: none;
+  }
+
+  @media (min-width: $base-breakpoint) {
+    h1 {
+      font-size: 2.45em;
+    }
   }
 
   a {
@@ -17,20 +28,21 @@ article {
   }
 
   .metadata {
-    @include outer-container;
+    display: flex;
+    flex-flow: row wrap;
     margin: 1.2em 0 0;
     font-family: $heading-font-family;
-    color: $medium-gray;
     font-size: 0.9em;
 
     a { border-bottom: 0; }
 
     .date {
-      @include span-columns(2);
       text-transform: uppercase;
+      padding-right: 1.5em;
     }
 
-    .tag-list { @include span-columns(10); }
+    .tag-list {
+    }
 
   }
 
@@ -47,14 +59,67 @@ article {
       list-style-type: decimal;
       margin: 0 0 1em 2em;
     }
-
   }
 
+}
 
+.article-previews  {
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 0;
+  }
+}
+
+.article-list {
+  padding: 1em 0;
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 0;
+
+    li {
+      margin-top: 0.5em;
+    }
+  }
+
+  h1 {
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: $base-breakpoint) {
+    h1 {
+      font-size: 2.45em;
+    }
+  }
 }
 
 span.article-link {
   color: $medium-gray;
   text-transform: uppercase;
   margin-left: 0.5em;
+}
+
+.article-links {
+  margin-top: 1em;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  font-size: 0.95em;
+
+  .previous-link {
+  }
+
+  .next-link {
+    text-align: right;
+  }
+}
+
+
+@media (min-width: $base-breakpoint) {
+  .all-articles {
+    font-size: 1.8em;
+  }
 }

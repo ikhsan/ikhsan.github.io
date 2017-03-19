@@ -1,20 +1,14 @@
 // Typography
-$base-font-family: 'Nunito', $helvetica, sans-serif;
-$heading-font-family: 'PT Sans', $helvetica, sans-serif;
+$base-font-family: 'Nunito', helvetica, sans-serif;
+$heading-font-family: 'PT Sans', helvetica, sans-serif;
 
 // Font Sizes
-$base-font-size: 15px;
+$base-font-size: 1em;
 $heading-font-size: 38px;
 
 // Line height
 $base-line-height: 1.8;
 $heading-line-height: 1.2;
-
-// Other Sizes
-$base-border-radius: 3px;
-$base-spacing: $base-line-height * 1em;
-$small-spacing: $base-spacing / 2;
-$base-z-index: 0;
 
 // Colors
 $blue: #477dca;
@@ -31,3 +25,4 @@ $action-color: $base-font-color;
 // Border
 $base-border-color: $light-gray;
 $base-border: 1px solid $base-border-color;
+$base-breakpoint: 768px;

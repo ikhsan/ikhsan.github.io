@@ -1,10 +1,8 @@
-div.tag-list {
-  a {
-    font-family: $heading-font-family;
-    text-transform: uppercase;
-    margin-right: 0.5em;
-    color: $medium-gray;
-    border-bottom: 0;
-    &::before { content: "#"; }
-  }
+a.tag {
+  font-family: $heading-font-family;
+  text-transform: uppercase;
+  margin-right: 0.5em;
+  color: $medium-gray;
+  border-bottom: 0;
+  &::before { content: "#"; }
 }
