@@ -1,12 +1,12 @@
 xml.instruct!
 xml.feed "xmlns" => "http://www.w3.org/2005/Atom" do
-  site_url = "http://codage.ikhsan.me/"
+  site_url = "http://codeage.ikhsan.me/"
   xml.title "Codeage"
   xml.subtitle "Ramblings about code"
   xml.id URI.join(site_url, blog.options.prefix.to_s)
   xml.link "href" => URI.join(site_url, blog.options.prefix.to_s)
   xml.link "href" => URI.join(site_url, current_page.path), "rel" => "self"
-  xml.updated(blog.articles.first.date.to_time.iso8601) unless blog.articles.empty?
+  xml.updated(blog.local_articles.first.date.to_time.iso8601) unless blog.local_articles.empty?
   xml.author { xml.name "Ikhsan Assaat" }
 
   blog.local_articles[0..5].each do |article|
@@ -17,7 +17,7 @@ xml.feed "xmlns" => "http://www.w3.org/2005/Atom" do
       xml.published article.date.to_time.iso8601
       xml.updated File.mtime(article.source_file).iso8601
       xml.author { xml.name "Ikhsan Assaat" }
-      # xml.summary article.summary, "type" => "html"
+      xml.summary article.summary, "type" => "html"
       xml.content article.body, "type" => "html"
     end
   end
