@@ -1,9 +1,9 @@
 /*ThankfulEyes, Colorful, Github, Base16, Base16::Solarized (like Octopress), Base16::Monokai, and Monokai*/
-
 <%= Rouge::Themes::ThankfulEyes.render(:scope => '.highlight') %>
 
 .highlight {
   margin-bottom: 1em;
+  font-size: 1em;
   overflow-x:auto;
 }
 
@@ -12,5 +12,19 @@
 }
 
 .highlight td.gutter {
-  width: 2em;
+  display: none;
+}
+
+.highlight td.code {
+  padding-left: 8px;
+}
+
+@media (min-width: $base-breakpoint) {
+  .highlight td.gutter {
+    display: table-cell;
+  }
+
+  .highlight td.code {
+    padding-left: 5px;
+  }
 }

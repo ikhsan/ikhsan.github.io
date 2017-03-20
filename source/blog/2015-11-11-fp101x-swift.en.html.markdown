@@ -15,7 +15,94 @@ Since I could not found any swift code found in the FP101x class, I ported the h
 Below is the snippet of the lab2.hs exercise written in Swift
 
 ```swift
+// Helpers
+public func eval(_ digits: [Int]) -> Int {
+    return digits.reduce(0, { result, digit in
+        return digit + (result * 10)
+    })
+}
 
+public func evalRev(_ digits: [Int]) -> Int {
+    var result = 0
+
+    for index in stride(from: (digits.count-1), through: 0, by: -1) {
+        result = (result * 10) + digits[index]
+    }
+
+    return result
+}
+
+extension Sequence {
+    public func all(_ validateElement: (Self.Iterator.Element) -> Bool) -> Bool {
+        return self.reduce(true) { result, element in
+            return result && validateElement(element)
+        }
+    }
+}
+
+// Ex. 0
+func toDigits(digit: Int) -> [Int] { return [] }
+
+// Ex. 1
+func toDigitsRev(digit: Int) -> [Int] { return [] }
+
+// Ex. 2
+func doubleSecond(digits: [Int]) -> [Int] { return [] }
+
+// Ex. 3
+func sumDigits(digits: [Int]) -> Int { return 0 }
+
+// Ex. 4
+func isValid(digit: Int) -> Bool { return false }
+
+// Ex. 5
+func numValid(digits: [Int]) -> Int {
+    return digits.filter(isValid).count
+}
+// Helpers
+public func eval(_ digits: [Int]) -> Int {
+    return digits.reduce(0, { result, digit in
+        return digit + (result * 10)
+    })
+}
+
+public func evalRev(_ digits: [Int]) -> Int {
+    var result = 0
+
+    for index in stride(from: (digits.count-1), through: 0, by: -1) {
+        result = (result * 10) + digits[index]
+    }
+
+    return result
+}
+
+extension Sequence {
+    public func all(_ validateElement: (Self.Iterator.Element) -> Bool) -> Bool {
+        return self.reduce(true) { result, element in
+            return result && validateElement(element)
+        }
+    }
+}
+
+// Ex. 0
+func toDigits(digit: Int) -> [Int] { return [] }
+
+// Ex. 1
+func toDigitsRev(digit: Int) -> [Int] { return [] }
+
+// Ex. 2
+func doubleSecond(digits: [Int]) -> [Int] { return [] }
+
+// Ex. 3
+func sumDigits(digits: [Int]) -> Int { return 0 }
+
+// Ex. 4
+func isValid(digit: Int) -> Bool { return false }
+
+// Ex. 5
+func numValid(digits: [Int]) -> Int {
+    return digits.filter(isValid).count
+}
 // Helpers
 public func eval(_ digits: [Int]) -> Int {
     return digits.reduce(0, { result, digit in
