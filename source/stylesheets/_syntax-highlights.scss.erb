@@ -3,7 +3,7 @@
 
 .highlight {
   margin-bottom: 1em;
-  font-size: 1em;
+  font-size: 0.7em;
   overflow-x:auto;
 }
 
@@ -20,6 +20,10 @@
 }
 
 @media (min-width: $base-breakpoint) {
+  .highlight {
+    font-size: $base-font-size;
+  }
+
   .highlight td.gutter {
     display: table-cell;
   }
