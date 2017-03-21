@@ -1,7 +1,7 @@
 ---
 title: "Visualisasi Data dengan Swift : Ramadhan di Masa Depan"
 date: 2015-08-06 09:21 UTC
-tags: swift
+tags: swift, data-visualization
 ---
 
 Pengalaman berpuasa di London membuat saya ingin mengetahui bagaimana rasanya berpuasa di kota-kota lain di seluruh dunia. Untuk itu [saya membuat visualisasi](http://www.ikhsan.me/post/126462222797/the-future-of-ramadhan) sederhana untuk menjawab rasa penasaran tersebut. READMORE

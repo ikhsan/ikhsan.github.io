@@ -1,7 +1,7 @@
 ---
 title: "Data Visualisation with Swift : The Future of Ramadhan"
 date: 2015-08-06 09:24 UTC
-tags: swift
+tags: swift, data-visualization
 ---
 
 Fasting in London during Ramadhan made me think about how long should other Muslims around the world fast. Motivated by my own curiosity, [I created a visualisation](http://www.ikhsan.me/post/126462222797/the-future-of-ramadhan) to answer that question. READMORE
