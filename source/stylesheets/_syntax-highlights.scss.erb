@@ -3,7 +3,8 @@
 
 .highlight {
   margin-bottom: 1em;
-  // font-size: 10px;
+  font-size: 0.9em;
+  -webkit-text-size-adjust: 100%;
   overflow-x:auto;
 }
 
@@ -16,20 +17,12 @@
 }
 
 .highlight td.code {
-  padding-left: 8px;
+  padding-left: 10px;
 }
 
 @media (min-width: $base-breakpoint) {
-  .highlight {
-    // font-size: $base-font-size;
-  }
-
   .highlight td.gutter {
     display: table-cell;
-    padding-left: 0.7em;
-  }
-
-  .highlight td.code {
-    padding-left: 5px;
+    padding: 0 0.4em;
   }
 }
