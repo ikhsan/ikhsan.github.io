@@ -7,6 +7,10 @@ nav {
     text-transform: capitalize;
     margin: 0;
     font-weight: bold;
+
+    a {
+      padding: 0 10px;
+    }
   }
 
   p.blog-description {

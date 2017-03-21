@@ -46,19 +46,9 @@ article {
 
   }
 
-  ul, ol {
-    margin-bottom: 1em;
-    padding-left: 20px;
-  }
-
   .footnotes {
     border-top: 1px solid shade($base-border-color, 40%);
     padding-top: 0.5em;
-
-    ol {
-      margin-bottom: 1em;
-      padding-left: 20px;
-    }
   }
 
 }
