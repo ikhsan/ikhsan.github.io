@@ -116,7 +116,7 @@ return strings
 
 Setiap array string yang kita dapatkan akan berjumlah tiga, yaitu dalam kesatuan format (`"<key>" = "<value>";`), key-nya (`<key>`) dan terakhir value dari key tersebut (`<value>`). Kita hanya akan menggunakan 2 string terakhir dari setiap array string kita.
 
-Terakhir kita akan mengkonversi semua pasangan <key, value> kita ke dalam format yang bisa dibaca Excel. Format yang paling mudah adalah format csv atau comma separated value. Intinya tiap kolom akan dipisahkan dengan koma; "`<key>,<value>\n`"
+Terakhir kita akan mengkonversi semua pasangan `<key, value>` kita ke dalam format yang bisa dibaca Excel. Format yang paling mudah adalah format csv atau comma separated value. Intinya tiap kolom akan dipisahkan dengan koma; "`<key>,<value>\n`"
 
 Bila kita gabung seluruh proses ini menjadi satu kesatuan, fungsi pengurai akan terlihat seperti berikut
 

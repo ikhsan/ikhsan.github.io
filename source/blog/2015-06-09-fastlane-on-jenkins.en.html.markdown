@@ -4,7 +4,7 @@ date: 2015-06-09 04:32 UTC
 tags: ruby, fastlane, jenkins
 ---
 
- __Fastlane__ helps you configure your deployment pipeline. There are advantages by using fastlane whichever CI solution you have, whether it's Travis in the cloud, Jenkins in your local CI machine or even your own dev machine. READMORE [Fastlane](https://fastlane.tools) comprises different toolsets for different purposes. First thing you might want to look at is its [list of actions](https://github.com/KrauseFx/fastlane/blob/master/docs/Actions.md).
+ __Fastlane__ helps you configure your deployment pipeline. There are advantages by using fastlane whichever CI solution you have, whether it's Travis in the cloud, Jenkins in your local CI machine or even your own dev machine. READMORE [Fastlane](https://fastlane.tools) comprises different toolsets for different purposes. First thing you might want to look at is its [list of actions](https://docs.fastlane.tools/actions/).
 
 Starting is quick and easy. Fastlane even has its own setup assistant to help you out.
 
@@ -26,7 +26,7 @@ The config files (known as `Fastfile`) are just plain texts, so we could just ea
 
 ### Jenkins integration is (or should be) Easy
 
-Fastlane has a [short and sweet guideline](https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Jenkins.md) on Jenkins integration. Once Jenkins and Fastlane is installed in your CI machine, you need to create a job that has two things: fetching the repository (using git or SVN plugin) and execute the Fastlane's script (`fastlane <your lane>`).
+Fastlane has a [short and sweet guideline](https://github.com/fastlane/docs/blob/master/docs/best-practices/continuous-integration.md#jenkins-integration) on Jenkins integration. Once Jenkins and Fastlane is installed in your CI machine, you need to create a job that has two things: fetching the repository (using git or SVN plugin) and execute the Fastlane's script (`fastlane <your lane>`).
 
 ## Problem with Jenkins
 
@@ -63,7 +63,7 @@ This is not necessarily a Jenkins-specific problem, but if you come across this 
 * add `$(SDKROOT)/ResourceRules.plist`
 
 ### (Another) Codesigning Error
-I stumbled upon this issue when I'm using these two [ipa actions](https://github.com/KrauseFx/fastlane/blob/master/docs/Actions.md#ipa) paramaters: `'embed'` and `'identity'`. It uses `codesign` tools in the background. But I had an error saying that `"code failed to satisfy specified code requirement(s)"`. After quick search on the internet, I found [an article](http://blog.hoachuck.biz/blog/2013/10/29/codesign-useful-info-in-xcode-5-dot-0-1/) that explains that I'm having an incorrect codesign_allocate's path.
+I stumbled upon this issue when I'm using these two [ipa actions](https://docs.fastlane.tools/actions/#ipa) paramaters: `'embed'` and `'identity'`. It uses `codesign` tools in the background. But I had an error saying that `"code failed to satisfy specified code requirement(s)"`. After quick search on the internet, I found [an article](http://blog.hoachuck.biz/blog/2013/10/29/codesign-useful-info-in-xcode-5-dot-0-1/) that explains that I'm having an incorrect codesign_allocate's path.
 
 The workaround it to force adding it to the job. You can do that either inside the jenkins script or put it inside the Fastfile. My approach is to add it in my Fastfile;
 

@@ -12,3 +12,6 @@ deploy: build
 article:
 	bundle exec middleman article '${TITLE}' -l id
 	bundle exec middleman article '${TITLE}' -l en
+
+test: build
+	bundle exec htmlproofer build/ --check-favicon --check-html --empty-alt-ignore false

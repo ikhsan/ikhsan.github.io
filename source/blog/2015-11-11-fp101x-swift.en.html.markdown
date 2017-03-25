@@ -6,7 +6,9 @@ tags: functional programming, swift, haskell
 
 I am currently taking [TUDelft's "FP101x - Intro to Functional Programming"](https://www.edx.org/course/introduction-functional-programming-delftx-fp101x-0) class at edX, and I am enjoying it so far. This post is written to share my FP101x exercises that I did with Swift. READMORE The instructor of the class, [Erik Meijer](https://twitter.com/headinthebox), even said this a while back:
 
+<div>
 <blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">At this point, <a href="https://twitter.com/SwiftLang">@SwiftLang</a> is probably a better, and more valuable, vehicle for learning functional programming than Haskell.</p>&mdash; Erik Meijer (@headinthebox) <a href="https://twitter.com/headinthebox/status/655407294969196544">October 17, 2015</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
 
 Since I could not found any swift code found in the FP101x class, I ported the haskell files to Swift playgrounds.
 

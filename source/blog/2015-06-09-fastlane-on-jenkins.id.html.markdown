@@ -4,7 +4,7 @@ date: 2015-06-09 04:32 UTC
 tags: ruby, fastlane, jenkins
 ---
 
-__Fastlane__ akan membantu kita dalam mengkonfigurasi jalur _deployment_ yang kita punya. Ada beberapa keuntungan dalam menggunakan fastlane, apapun Continuous Integration (CI) yang kita gunakan, mau itu Travis di _cloud_, Jenkins di mesin CI lokal atau bahkan mesin yang kita gunakan untuk pengembangan. READMORE [Fastlane](https://fastlane.tools) terdiri dari berbagai kakas untuk berbagai kepentingan pula. Tempat pertama yang perlu kita cek adalah [daftar perintah-perintah](https://github.com/KrauseFx/fastlane/blob/master/docs/Actions.md) yang bisa digunakan.
+__Fastlane__ akan membantu kita dalam mengkonfigurasi jalur _deployment_ yang kita punya. Ada beberapa keuntungan dalam menggunakan fastlane, apapun Continuous Integration (CI) yang kita gunakan, mau itu Travis di _cloud_, Jenkins di mesin CI lokal atau bahkan mesin yang kita gunakan untuk pengembangan. READMORE [Fastlane](https://fastlane.tools) terdiri dari berbagai kakas untuk berbagai kepentingan pula. Tempat pertama yang perlu kita cek adalah [daftar perintah-perintah](https://docs.fastlane.tools/actions/) yang bisa digunakan.
 
 Memulai cukup cepat dan mudah. Fastlane bahkan punya asisten yang akan membantu kita _nyetting_ di awal.
 
@@ -27,7 +27,7 @@ File konfigurasi (yang bernama `Fastfile`) hanya berupa file teks biasa, jadi ki
 
 ### Integrasi dengan Jenkins (yang Seharusnya Mudah)
 
-Fastlane mempunyai [panduan singkat](https://github.com/KrauseFx/fastlane/blob/master/docs/Jenkins.md) untuk pengintegrasiannya dengan Jenkins. Kalau Jenkins dan Fastlane sudah terinstall, kita tinggal membuat job baru yang punya dua pekerjaan, mengambil kode sumber dari repositori (dengan plugin git atau SVN) dan mengeksekusi skrip perintah Fastlane (`fastlane <nama jalur>`).
+Fastlane mempunyai [panduan singkat](https://github.com/fastlane/docs/blob/master/docs/best-practices/continuous-integration.md#jenkins-integration) untuk pengintegrasiannya dengan Jenkins. Kalau Jenkins dan Fastlane sudah terinstall, kita tinggal membuat job baru yang punya dua pekerjaan, mengambil kode sumber dari repositori (dengan plugin git atau SVN) dan mengeksekusi skrip perintah Fastlane (`fastlane <nama jalur>`).
 
 ## Problem with Jenkins
 
@@ -64,7 +64,7 @@ Ini sebenarnya bukan masalah spesifik untuk Jenkins, tapi kalau Anda bertemu mas
 * Tambahkan `$(SDKROOT)/ResourceRules.plist`
 
 ### Error pada Codesigning (Lagi)
-Saya menemukan masalah ini saat menggunakan dua parameter dari perintah [ipa](https://github.com/KrauseFx/fastlane/blob/master/docs/Actions.md#ipa) : `'embed'` and `'identity'`. Perintah ini menggunakan kakas `codesign` didalamnya. Tapi saya menemukan pesan error yang berujar `"code failed to satisfy specified code requirement(s)"`. Sedikit googling, saya langsung menemukan sebuah [artikel](http://blog.hoachuck.biz/blog/2013/10/29/codesign-useful-info-in-xcode-5-dot-0-1/) yang menerangkan bahwa saya mempunyai path `codesign_allocate` yang salah.
+Saya menemukan masalah ini saat menggunakan dua parameter dari perintah [ipa](https://docs.fastlane.tools/actions/#ipa) : `'embed'` and `'identity'`. Perintah ini menggunakan kakas `codesign` didalamnya. Tapi saya menemukan pesan error yang berujar `"code failed to satisfy specified code requirement(s)"`. Sedikit googling, saya langsung menemukan sebuah [artikel](http://blog.hoachuck.biz/blog/2013/10/29/codesign-useful-info-in-xcode-5-dot-0-1/) yang menerangkan bahwa saya mempunyai path `codesign_allocate` yang salah.
 
 Solusi dari permasalahan ini adalah dengan menambahkan `path` tersebut secara "paksa". Kita bisa melakukannya di skrip dalam Jenkins (opsi execute shell) atau menambahkannya di Fastfile kita. Kalau saya tinggal menambahkannya saja di Fastfile;
 
