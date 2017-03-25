@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ikhsan/ikhsan.github.io.svg?branch=develop)](https://travis-ci.org/ikhsan/ikhsan.github.io)
+
 # My Code Blog
 
 I'm Ikhsan and this is my blog for my thoughts on codes and the likes. All other stuff are on my main blog, [Lifeage](http://ikhsan.me).
