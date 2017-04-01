@@ -1,31 +1,31 @@
 ---
-title: Notifikasi yang Lebih Keras, Bagus, Cepat, dan Kuat
+title: Notifikasi yang Lebih Keras, Bagus, Cepat dan Kuat
 date: 2017-03-26 11:55 UTC
 tags: notification, objective-c, swift
 ---
 
-At work, we are rethinking ways to communicate changes from our models. The changes should be propagated to all interested classes. This sounds like the perfect use case for introducing new reactive libraries, but this is not an article on how to use fantastic reactive libraries. Instead, let me reintroduce to our old friends, `Notification` and `NotificationCenter`. READMORE
+Di tempat saya bekerja sekarang, kami sedang memikirkan ulang cara lain mengkomunikasikan perubahan yang terjadi di kelas model. Perubahan ini harus tersiarkan ke kelas-kelas lain. Sepertinya, ini akan terdengar sebagai contoh kasus yang tepat untuk memperkenalkan konsep reaktif, namun ini bukan artikel untuk menjelaskan bagaimana menggunakan `ReactiveCococa` atau `RxSwift`. Sebaliknya, perkenankan saya mengingatkan kembali kepada teman lama kita, `Notification` and `NotificationCenter`. READMORE
 
-## Requirements
+## Kebutuhan
 
-In this article, I will share the requirements and my current design of the better version of `Notification`. Note that this is only for custom notifications. Supporting `UIKit`'s notifications is out of this article's scope.
+Di artikel ini, saya akan bercerita tentang kebutuhan dan rancangan sementara versi lebih baiknya kelas `Notification` (atau yang di masanya dikenal sebagai `NSNotification`). Harap dicatat artikel ini hanya akan membahas kelas `Notification` yang _custom_. Notifikasi `UIKit` adalah di luar cakupan artikel ini.
 
 ![harder_better](blog/2017-03-26-harder-better-faster-stronger-notification/harder_better.jpg "Harder better faster stronger")
 
-* __Harder__ to make mistakes. No use for stringly-typed notification names.
-* __Better__ compatibility with Objective-C. Our app is almost 5 year-old, it is important to keep it compatible with our old Objective-C classes.
-* __Faster__ creation of posts and observers. Posting and observing changes should be fast and easy.
-* __Stronger__ types. `Notification` has poor type information, you can put any class (or not) as the `object` and put any dictionary as its `userInfo`. Let's make a safer version with more type information.
+* __Harder__, lebih sulit untuk membuat kesalahan. Tidak ada lagi menamakan notifikasi dengan `String`.
+* __Better__, kompatibilitas yang lebih baik dengan Objective-C. Aplikasi kami berumur 5 tahun, sehingga penting untuk bisa digunakan oleh kelas-kelas Objective-C.
+* __Faster__, penciptaan _post_ dan _observer_ yang cepat. Menyiarkan dan mendengarkan perubahan akan menjadi lebih mudah.
+* __Stronger__, informasi tipe yang lebih kuat. `Notification` mempunyai tipe informasi yang lemah, Anda bisa memberikan kelas apapun sebagai `object`-nya dan _dictionary_ apapun sebagai `userInfo`-nya.
 
-_I know, these requirements was a bit forced. I made it up just to make my Daft Punk reference relevant._
+_Memang kebutuhannya ini sedikit terdengar memaksa, saya membuatnya agar referensi Daft Punk saya relevan dengan artikel ini._
 
-## 1st Design: Swift Talk's design
+## Rancangan 1: Rancangan dari Swift Talk
 
-My starting point was heavily based on someone's work. Chris and Florian from [Swift Talk](https://talk.objc.io) fame have [great](https://talk.objc.io/episodes/S01E27-typed-notifications-part-1) [screencasts](https://talk.objc.io/episodes/S01E28-typed-notifications-part-2) (which you all should [subscribe](https://talk.objc.io/subscribe)!) that teach viewers how to wrap `Notification` using protocols. The basic idea is that the protocol will require notification name and the object itself will be assigned as `Notification` object property.
+Langkah awal saya diinspirasikan dari pekerjaan orang lain, adalah Chris dan Florian dari [Swift Talk](https://talk.objc.io) yang mengajarkan pemirsanya bagaimana membungkus `Notification` menggunakan protokol. Ide dasarnya adalah protokol tersebut mempunyai nama untuk notifikasi dan objeknya itu sendiri di-_assign_ sebagai `object`-nya.
 
 ```swift
 
-// MARK: Design I
+// MARK: Rancangan 1
 protocol Notifiable {
     static var notificationName: Notification.Name { get }
 }
@@ -46,11 +46,11 @@ extension NotificationCenter {
 }
 ```
 
-Let's make a simple example to explain its design and why it is better than `Notification`'s API. Supposed that we have global counter in our app and we want to get the latest changes of our counter. We will make custom notification class called `CounterDidChangeNotification` that conforms to `Notifiable` protocol. We use class instead of struct because it will be used by Objective-C classes. Don't forget to [use good names for your notification](/blog/en/how-to-name-your-notification.html).
+Mari kita buat contoh sederhana untuk memperjelas rancangan ini dan kenapa ini lebih baik dari rancangan `Notification` sebelumnya. Misalkan kita mempunyai _counter_ global di aplikasi kita dan kita mau mendapatkan nilainya setiap kali ada perubahan. Kita akan membuat kelas notifikasi `CounterDidChangeNotification` yang memenuhi protokol `Notifable`. Kita menggunakan kelas daripada _struct_ karena ini akan digunakan oleh kelas Objective-C juga. Jangan lupa gunakan [nama yang bagus untuk kelas notifikasimu](/blog/id/how-to-name-your-notification.html).
 
 ```swift
 
-// MARK: Design I's call site
+// MARK: Rancangan 1 - call site
 final class CounterDidChangeNotification: NSObject {
     let count: Int
     init(_ count: Int) {
@@ -69,18 +69,20 @@ extension CounterDidChangeNotification: Notifiable {
 notificationCenter.post(CounterDidChangeNotification(10))
 
 notificationCenter.observe { (notification: CounterDidChangeNotification) in
-    print("latest count \(notification.count)") // will print "latest count 10"
+    print("latest count \(notification.count)") // akan mencetak "latest count 10"
 }
 ```
 
-All good![^1] 👏👏
+Rancangan antarmuka `Notification` kita sekarang lebih aman dan lebih punya informasi ketimbang antarmuka dari `Foundation`. Bila kita ingin menyiarkan menggunakan yang disediakan `Foundation`, fungsinya memerlukan namanya dan juga objek yang bisa jadi apa saja atau bahkan `nil` . Cara mendengerkan notifikasi dari `Foundation` juga tidak kalah ribet, fungsinya sama juga memerlukan nama dan _block_-nya harus mengetahui caranya mengambil informasi dari kelas `Notification`, bisa saja `object`-nya yang penting, atau informasi di dalam `userInfo` yang penting.
 
-## 2nd Design: Auto-naming
+Sedangkan di rancangan `Notification` kita, sewaktu menyiarkan kita tinggal membuat instansi dari `Notifiable` lalu disiarkan menggunakan fungsi `post`. Mendengarkan notifikasi lebih canggih lagi, kita tinggal memberikan informasi tentang kelas apa yang kita sedang ingin dengarkan di dalam _block_. Swift cukup pintar untuk mendapatkan informasi tersebut hanya dari tipenya (untuk kasus ini adalah dari kode `{ (notification: CounterDidChangeNotification) in ... }`). Sisa informasi seperti nama dan bagaiaman cara mengolah objek notifikasi sudah diurus oleh fungsi yang kita tulis.
 
-We can take the 1st design up a notch by deriving the name from the class name using protocol extension.
+## Rancangan 2: Penamaan Otomatis
+
+Kita bisa membuat rancangan pertama lebih baik lagi yaitu menggunakan nama kelas kita sebagai nama notifikasi dengan ekstensi protokol kita.
 
 ```swift
-// MARK: Design II
+// MARK: Rancangan 2
 protocol Notifiable {
     static var notificationName: Notification.Name { get }
 }
@@ -92,12 +94,12 @@ extension Notifiable {
 }
 ```
 
-Our notification class won't need to give an explicit name anymore because it will use default implementation by using the class name as its notification name. Note that you can still override the implementation and give explicit name if needed.
+Kita tidak perlu memberikan nama secara manual lagi kepada notifikasi kita karena implementasi ekstensi protokol `Notifiable` akan menggunakan nama kelas itu sendiri. Perlu dicatat, kita tetap bisa memberikan nama secara manual jika diperlukan dengan cara mengimplementasikan properti `notificationName` di kelas kita.
 
-Now our `CounterDidChangeNotification` is simpler, we can start posting it just by conforming to `Notifiable` protocol.
+Kelas `CounterDidChangeNotification` kita sudah lebih sederhana, sekarang kita bisa membuat kelas tersebut bisa disiarkan hanya dengan membubuhi protokol `Notifiable`.
 
 ```swift
-// MARK: Design II's call site
+// MARK: Rancangan 2 - call site
 final class CounterDidChangeNotification: NSObject, Notifiable {
     let count: Int
 
@@ -108,27 +110,27 @@ final class CounterDidChangeNotification: NSObject, Notifiable {
 }
 ```
 
-The protocol is even shorter, great! 👍
+Sekarang, menyiarkan sebuah kelas menjadi bertambah mudah, mantap! 👍
 
 ![great](blog/2017-03-26-harder-better-faster-stronger-notification/dp.gif "great")
 
-## 3rd Design: Needy old friend
+## Rancangan 3: Teman lama kita
 
-Here comes the harder parts: Objective-C. Let's see our `NotificationCenter` extension inside our generated header file.
+Sekarang bagian yang tersulit: Objective-C. Mari kita lihat fungsi `NotificationCenter` kita di _header file_.
 
 ```objc
 @interface NSNotificationCenter (SWIFT_EXTENSION(Notification))
 @end
 ```
 
-Can you see any of our extension methods? Exactly! Objective-C can't understand Swift's protocol extensions and generic methods.
+Apakah kita bisa lihat fungsi ekstensi yang sudah kita tambahkan? Nah, itu dia, Objective-C tidak mengertik konsep ekstensi protokol dan fungsi generik dari Swift. Jadi bagaimana caranya agar kelas kita dapat digunakan oleh kelas-kelas Objective-C?
 
-First step, we can make our `Notifiable` protocol to be a base class so that it will share its dynamic notification naming.
+Langkah pertama, kita ubah protokol `Notifiable` menjadi kelas basis sehingga kita bisa membuat kelas-kelas turunannya mempunyai cara menamakan notifikasinya secara dinamis.
 
-Making your code compatible with Objective-C can sometimes feel like your going backwards. You might often heard that "Don't use subclass if you don't want magic behaviours, use protocol extension all the way, etc". Subclassing is fine, nothing bad about using it. Subclassing is a great tool especially in our case because we care about compatibility and only have one level of subclassing.
+Terkadang membuat kode yang kompatibel dengan Objective-C terasa seperti berjalan mundur. Seringkali kita dengar "Jangan gunakan _subclassing_ kalau tidak mau kelas mempunyai tingkah laku yang sulit dicari asalnya darimana, gunakan ekstensi protokol, dsb". _Subclassing_ itu sah-sah saja, tidak ada yang buruk dengan itu. _Subclassing_ adalah salah satu kakas yang baik, apalagi untuk kasus kita yang memerlukan kompatibilitas dengan Objective-C dan hanya mempunyai satu tingkat keturunan.
 
 ```swift
-// MARK: Design III
+// MARK: Rancangan 3
 class Notifiable: NSObject {
     static var notificationName: Notification.Name {
         return Notification.Name(String(describing: self))
@@ -136,13 +138,12 @@ class Notifiable: NSObject {
 }
 ```
 
-Next step, we make our `post` method compatible with Objective-C. Let's ditch the generics and use our new `Notifiable` base class. The other method `observe` is trickier. Because Objective-C's generic support is limited, we pass the class' type as a parameter and use that to check `Notification`'s object. This interface is not as typed as its Swift's counterparts, but at least it is safe because the block won't get called with incorrect object.
+Langkah selanjutnya, kita membuat fungsi `post` kita kompatibel dengan Objective-C dengan cara mengganti tipe generik dengan kelas baru `Notifiable`. Fungsi satunya lagi, `observe` sedikit lebih rumit. Kemampuan Objective-C dalam mengenal kelas generik terbatas, sehingga kita memberikan informasi tipe kelas kita lewat parameter. Rancangan ini memang tidak mempunyai informasi selengkap fungsi pasangannya di Swift, tapi paling tidak kita bisa membuatnya lebih aman karena _block_ yang kita berikan tidak akan terpanggil jika tipenya tidak sesuai.
 
-It works like an immigration officer, they compare visitor's visa and the current country, then allow them to pass the border if visitor has the correct visa. Similarly, we compare the name of `Notification`'s object and the passed class's name from the parameter, then allow the object by passing it through the block if both has the same name.
-
+Cara kerjanya seperti petugas imigrasi saja, mereka menyocokkan visa turis dengan negara kunjungannya, bila turis punya visa yang benar maka petugas akan mengizinkan turis melewati gerbang imigrasi. Nah mirip-mirip, fungsi kita akan menyocokkan nama kelas dari object notifikasi dan nama kelas dari parameter, bila nama objek notifikasi benar maka fungsi kita akan memanggil _block_ dengan menggunakan objek tersebut.
 
 ```swift
-// MARK: Design III continued
+// MARK: Lanjutan Rancangan 3
 func post(notifiable: Notifiable) {
     post(name: type(of: notifiable).notificationName, object: notifiable)
 }
@@ -161,7 +162,7 @@ func observe(classType: Notifiable.Type, using block: @escaping (Any) -> ()) -> 
 }
 ```
 
-Now let's look back to our generated headers again, now we should see our methods in `NotificationCenter` extension!
+Sekarang mari kita cek kembali _header file_ kita, maka 2 fungsi kita akan terlihat di ekstensi `NotificationCenter`!
 
 ```objc
 @interface NSNotificationCenter (SWIFT_EXTENSION(Notification))
@@ -170,60 +171,17 @@ Now let's look back to our generated headers again, now we should see our method
 @end
 ```
 
-Last step, use our method extension by passing the class that we're interested in and force cast the `id` to that same class. Look closely on two appearances of `CounterDidChangeNotification`, one as parameter and one as the type inside the block.
+Langkah terakhir, adalah gunakan fungsi `observe` baru kita dengan cara _force cast_ type `id` dengan kelas yang kita inginkan. Lihat seksama bagaimana parameter tipe di parameter pertama harus sama dengan tipe yang digunakan _block_ di parameter kedua.
 
 ```objc
-// MARK: Design III's call site
+// MARK: Rancangan 3 - call site
 [self.notificationCenter
     observeWithClassType:CounterDidChangeNotification.class
     using:^(CounterDidChangeNotification *notification) {
-    NSLog(@"latest count %ld", (long)notification.count) // will print "latest count 10"
+    NSLog(@"latest count %ld", (long)notification.count) // akan mencetak "latest count 10"
 }];
 ```
 
-Great! We have compatible interfaces to post and observe in both languages 🙌 I'm pretty happy on this current design. There are gotchas that I would like remove but I don't know how. Let me know if you have more techniques to make `Notification` better to create and use. Rock on!
+Ajib! Sekarang kita mempunyai rancangan fungsi untuk menyiarkan dan mendengarkan notifikasi yang kompatibel di dua bahasa (Swift dan Objective-C) 🙌 Saya cukup puas dengan rancangan ini, namun bila ada ide atau teknik yang bisa membuat kelas `Notification` ini lebih aman dan mudah digunakan, mohon bagi-bagi.
 
-![spaceship](blog/2017-03-26-harder-better-faster-stronger-notification/shep_spaceship.jpg "Shep spaceship")
-
-To see it in action, I made a sample app that use this `Notification` design if needed: [Notification sample](https://github.com/ikhsan/ikhsan.github.io/tree/develop/source/blog/2017-03-26-harder-better-faster-stronger-notification/Notification).
-
-## Gotchas
-
-There are still 2 gotchas that I can't solve.
-
-### Compiler allows to pass all classes inside observe method
-
-The compiler can't detect whether the class type is a subclass of `Notifiable` class or not. Although, the type of the class has been specified as `Notifiable.Type` but it is translated only as a `Class`. (Actually, it's `SWIFT_METATYPE(Notifiable)` which is a macro that translates into `Class`). So, that parameter can accept all classes like `NSString.class` or `NSData.class` without making the compiler complain.
-
-Is there a way to make compiler stricter by only allowing `Notifiable` class types?
-
-### Using string comparison is not really ideal, in objective-c it's easier
-
-The way that I compare classes is by comparing via `String`'s `describing:` init method. In Objective-C, I know I can just check classes by using `isKindOfClass:`
-
-```objc
-- (id <NSObject>)observeWithClassType:(Class)classType using:(void (^)(id notification))block {
-    // ...
-
-    if ([notificationObject isKindOfClass:classType]) {
-        // ...
-    }
-}
-```
-
-The same checks can't be done in Swift.
-
-```swift
-func observe(classType: Notifiable.Type, using block: @escaping (Any) -> ()) -> NSObjectProtocol {
-    // ...
-
-    // Got "use of undeclared type 'classType'" error
-    if (notificationObject is classType) {
-        // ...
-    }
-}
-```
-
-I'm fine using current comparison with `String`s, but I think it would be more ideal to check class types using Swift's `is`. Is this feasible in Swift?
-
-[^1]: That is their synchronised clapping as emoji
+Untuk melihat bagaimana cara kerja kelas `Notification` di atas, saya mempersiapkan aplikasi contoh bila memerlukan : [Notification sample](https://github.com/ikhsan/ikhsan.github.io/tree/develop/source/blog/2017-03-26-harder-better-faster-stronger-notification/Notification).

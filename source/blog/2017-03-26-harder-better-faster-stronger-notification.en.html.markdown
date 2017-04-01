@@ -73,7 +73,11 @@ notificationCenter.observe { (notification: CounterDidChangeNotification) in
 }
 ```
 
-All good![^1] 👏👏
+Our `Notification`s interface are more-typed and safer to `Foundation`'s. When posting in using `Foundation`'s interface (`post(name:object:)`), it needs its name to be manually put and its object can can be any type or even nil. Observing in `Foundation` is similarly tedious, it needs its name and then the block should process its `Notification` instance. The important info might be inside `object` or might be values inside `userInfo`.
+
+In our current design, when posting we just need to make a `Notifiable` instance and then post it. We don't need to care about naming or how to wrap the object. Moreover, observing feels almost magical since we only need to give information of the instance inside the block. Swift can derive which `Notifiable` instance the method is listening by looking at the type (in our case, it's `{ (notification: CounterDidChangeNotification) in ... }`). The names and how to unwrap the object will be taken care by our method.
+
+Very neat![^1] 👏👏
 
 ## 2nd Design: Auto-naming
 
@@ -108,7 +112,7 @@ final class CounterDidChangeNotification: NSObject, Notifiable {
 }
 ```
 
-The protocol is even shorter, great! 👍
+Now it's even easier to post notification class, great! 👍
 
 ![great](blog/2017-03-26-harder-better-faster-stronger-notification/dp.gif "great")
 
@@ -121,9 +125,9 @@ Here comes the harder parts: Objective-C. Let's see our `NotificationCenter` ext
 @end
 ```
 
-Can you see any of our extension methods? Exactly! Objective-C can't understand Swift's protocol extensions and generic methods.
+Can you see any of our extension methods? Exactly! Objective-C can't understand Swift's protocol extensions and generic methods. So how do we make our methods compatible to Objective-C classes?
 
-First step, we can make our `Notifiable` protocol to be a base class so that it will share its dynamic notification naming.
+Firstly, we can make our `Notifiable` protocol to be a base class so that it will share its dynamic notification naming.
 
 Making your code compatible with Objective-C can sometimes feel like your going backwards. You might often heard that "Don't use subclass if you don't want magic behaviours, use protocol extension all the way, etc". Subclassing is fine, nothing bad about using it. Subclassing is a great tool especially in our case because we care about compatibility and only have one level of subclassing.
 
@@ -183,9 +187,9 @@ Last step, use our method extension by passing the class that we're interested i
 
 Great! We have compatible interfaces to post and observe in both languages 🙌 I'm pretty happy on this current design. There are gotchas that I would like remove but I don't know how. Let me know if you have more techniques to make `Notification` better to create and use. Rock on!
 
-![spaceship](blog/2017-03-26-harder-better-faster-stronger-notification/shep_spaceship.jpg "Shep spaceship")
-
 To see it in action, I made a sample app that use this `Notification` design if needed: [Notification sample](https://github.com/ikhsan/ikhsan.github.io/tree/develop/source/blog/2017-03-26-harder-better-faster-stronger-notification/Notification).
+
+---
 
 ## Gotchas
 
