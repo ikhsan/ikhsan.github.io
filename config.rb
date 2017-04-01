@@ -17,7 +17,7 @@ activate :blog do |blog|
   # blog.default_extension = ".markdown"
 
   blog.prefix = "blog"
-  blog.layout = "article"
+  # blog.layout = "article"
   blog.summary_length = 250
   blog.tag_template = "tag.html"
   blog.calendar_template = nil

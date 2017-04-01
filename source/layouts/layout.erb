@@ -30,7 +30,21 @@
 
     <div id="main" role="main">
       <%= partial "partials/nav" %>
+
+      <% if is_blog_article? %>
+      <article>
+        <h1><%= current_article.title %></h1>
+        <%= yield %>
+        <div class="metadata">
+          <div class="date"><%= current_article.date.strftime('%b.%e %Y') %></div>
+          <%= partial "partials/tags", :locals => { :tags => current_article.tags } %>
+        </div>
+      </article>
+      <%= partial "partials/article-links", :locals => { :articles => blog.local_articles, :article => current_article } %>
+      <% else %>
       <%= yield %>
+      <% end %>
+
       <%= partial "partials/footer" %>
     </div>
 
