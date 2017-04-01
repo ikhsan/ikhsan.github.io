@@ -1,7 +1,10 @@
 language: ruby
 cache: bundler
 rvm: 2.2.4
+sudo: required
 branches:
   only:
   - develop
+before_install:
+  - sudo update-ca-certificates
 script: make test
