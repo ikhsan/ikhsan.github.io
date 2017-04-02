@@ -7,6 +7,13 @@ set :markdown, :fenced_code_blocks => true, :smartypants => true, :footnotes => 
 activate :deploy do |deploy|
   deploy.method = :git
   deploy.branch = 'master'
+
+  signature = "#{Middleman::Deploy::PACKAGE} #{Middleman::Deploy::VERSION}"
+  time = "#{Time.now.utc}"
+  base_message = ENV["TRAVIS_BUILD_NUMBER"] ? "Auto deploy" : "Manual deploy"
+  commit_message = "#{base_message} at #{time} by #{signature}"
+  commit_message += " (Travis Build \##{ENV["TRAVIS_BUILD_NUMBER"]})" if ENV["TRAVIS_BUILD_NUMBER"]
+  deploy.commit_message = commit_message
 end
 
 activate :blog do |blog|
@@ -69,7 +76,9 @@ helpers do
 end
 
 # Reload the browser automatically whenever files change
-activate :livereload
+configure :development do
+  activate :livereload
+end
 
 set :css_dir, 'stylesheets'
 set :js_dir, 'javascripts'
