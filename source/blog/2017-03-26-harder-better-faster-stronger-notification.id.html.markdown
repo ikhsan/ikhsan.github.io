@@ -184,4 +184,4 @@ Langkah terakhir, adalah gunakan fungsi `observe` baru kita dengan cara _force c
 
 Ajib! Sekarang kita mempunyai rancangan fungsi untuk menyiarkan dan mendengarkan notifikasi yang kompatibel di dua bahasa (Swift dan Objective-C) 🙌 Saya cukup puas dengan rancangan ini, namun bila ada ide atau teknik yang bisa membuat kelas `Notification` ini lebih aman dan mudah digunakan, mohon bagi-bagi.
 
-Untuk melihat bagaimana cara kerja kelas `Notification` di atas, saya mempersiapkan aplikasi contoh bila memerlukan : [Notification sample](2017-03-26-harder-better-faster-stronger-notification/Notification.zip).
+Untuk melihat bagaimana cara kerja kelas `Notification` di atas, saya mempersiapkan aplikasi contoh bila memerlukan : __Notification sample__ ([zip](2017-03-26-harder-better-faster-stronger-notification/Notification.zip), [github](https://github.com/ikhsan/ikhsan.github.io/tree/develop/source/blog/2017-03-26-harder-better-faster-stronger-notification/Notification/Notification)).
