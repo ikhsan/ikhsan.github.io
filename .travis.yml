@@ -13,4 +13,4 @@ before_install:
   - sudo update-ca-certificates
 script:
   - make test
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash make deploy; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then make deploy; fi'
