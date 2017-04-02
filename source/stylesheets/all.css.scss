@@ -29,6 +29,10 @@ a {
   }
 }
 
+code {
+  background-color: $lightest-gray;  
+}
+
 #main {
   padding: 0 1em;
   max-width: 50em;
@@ -43,6 +47,8 @@ a {
 img {
   max-width: 100%;
   height: auto;
+  margin: 0 auto;
+  display: block;
 }
 
 @media (min-width: $base-breakpoint) {
