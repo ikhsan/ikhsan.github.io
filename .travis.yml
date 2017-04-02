@@ -5,6 +5,12 @@ sudo: required
 branches:
   only:
   - develop
+env:
+  global:
+  - CI_COMMIT_AUTHOR="Travis CI"
+  - CI_COMMIT_EMAIL=ixnixnixn@yahoo.com
 before_install:
   - sudo update-ca-certificates
-script: make test
+script:
+  - make test
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash make deploy; fi'

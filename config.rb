@@ -7,6 +7,10 @@ set :markdown, :fenced_code_blocks => true, :smartypants => true, :footnotes => 
 activate :deploy do |deploy|
   deploy.method = :git
   deploy.branch = 'master'
+
+  if ENV["TRAVIS_BUILD_NUMBER"] then
+    deploy.commit_message += " (Travis Build \##{ENV["TRAVIS_BUILD_NUMBER"]})"
+  end
 end
 
 activate :blog do |blog|
@@ -69,7 +73,9 @@ helpers do
 end
 
 # Reload the browser automatically whenever files change
-activate :livereload
+configure :development do
+  activate :livereload
+end
 
 set :css_dir, 'stylesheets'
 set :js_dir, 'javascripts'
