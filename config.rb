@@ -8,9 +8,12 @@ activate :deploy do |deploy|
   deploy.method = :git
   deploy.branch = 'master'
 
-  if ENV["TRAVIS_BUILD_NUMBER"] then
-    deploy.commit_message += " (Travis Build \##{ENV["TRAVIS_BUILD_NUMBER"]})"
-  end
+  signature = "#{Middleman::Deploy::PACKAGE} #{Middleman::Deploy::VERSION}"
+  time = "#{Time.now.utc}"
+  base_message = ENV["TRAVIS_BUILD_NUMBER"] ? "Auto deploy" : "Manual deploy"
+  commit_message = "#{base_message} at #{time} by #{signature}"
+  commit_message += " (Travis Build \##{ENV["TRAVIS_BUILD_NUMBER"]})" if ENV["TRAVIS_BUILD_NUMBER"]
+  deploy.commit_message = commit_message
 end
 
 activate :blog do |blog|
