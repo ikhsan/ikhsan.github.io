@@ -187,7 +187,7 @@ Last step, use our method extension by passing the class that we're interested i
 
 Great! We have compatible interfaces to post and observe in both languages 🙌 I'm pretty happy on this current design. There are gotchas that I would like remove but I don't know how. Let me know if you have more techniques to make `Notification` better to create and use. Rock on!
 
-To see it in action, I made a sample app that use this `Notification` design if needed: [Notification sample](https://github.com/ikhsan/ikhsan.github.io/tree/develop/source/blog/2017-03-26-harder-better-faster-stronger-notification/Notification).
+To see it in action, I made a sample app that use this `Notification` design if needed: [Notification sample](2017-03-26-harder-better-faster-stronger-notification/Notification.zip).
 
 ---
 
