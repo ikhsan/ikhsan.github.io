@@ -1,15 +1,15 @@
 ---
-title: 3 Steps to Run Application on Your Apple Device without Developer Account
+title: 3 Steps to Run iOS App on Your Device Without Developer Account
 date: 2017-04-09 14:32 UTC
-tags: xcode, itunes
+tags: xcode
 ---
 
 For people who started iOS development, running your app in the app simulator won't be the same as running on your own device. There are features that don't exist in the simulator (and it's harder to show to your friends what you've made!). Luckily, it's free and easy to run your app on a physical device without a developer account. READMORE
 
 Here are the things that you need to prepare :
 
-- Mac OS machine running latest Xcode 💻
-- Apple device (more recent ones the better) 📱
+- 💻 Mac OS machine running latest Xcode
+- 📱 Apple device (more recent ones the better)
 - Apple account (the same account for downloading apps in the App Store)
 - Your app (if you don't have one yourself, [make a simple one](https://github.com/codebar/ios-tutorials/blob/master/introduction/tutorial.md))
 
@@ -47,3 +47,7 @@ Here are the things that you need to prepare :
 - 🎉
 
 It's great to see that Apple makes it easy for us to try our app in our actual hands. Happy testing!
+
+---
+
+I wrote this article as a pull request to enhance [codebar](https://codebar.io)'s awesome [iOS workshop session](https://codebar.io/events/intro-to-ios) tutorial written by [Yvette Cook](https://twitter.com/ynzc).

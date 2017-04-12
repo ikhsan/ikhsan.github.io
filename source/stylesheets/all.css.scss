@@ -30,7 +30,8 @@ a {
 }
 
 code {
-  background-color: $lightest-gray;  
+  background-color: $lightest-gray;
+  padding: 0 0.3em;
 }
 
 #main {
@@ -47,7 +48,7 @@ code {
 img {
   max-width: 100%;
   height: auto;
-  margin: 0 auto;
+  margin: 1em auto;
   display: block;
 }
 
