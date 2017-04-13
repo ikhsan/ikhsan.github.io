@@ -39,9 +39,9 @@ Here are the things that you need to prepare :
 - Press the play button to run the app!
 - Errm... not so fast. We need to allow codesign to access our keychain, press `Always Allow`
 ![allow keychain](blog/2017-04-09-three-steps-to-run-application-on-your-apple-device-without-developer-account/03_b_allow_keychain.png "Allow codesign to access keychain")
-- Almost there, but you will be prompted to verify your account in your device
+- Almost there, you will be prompted to verify your account in your device
 ![verify alert](blog/2017-04-09-three-steps-to-run-application-on-your-apple-device-without-developer-account/03_c_verify_alert.png "Verify account developer")
-- Go to `Settings` > `General` > `Profiles & Device Management`, tap your account under `Developer App`, tap `Trust '<your apple account email>'`, and confirm by tapping `Trust` again
+- Now on your iOS device, go to `Settings` > `General` > `Profiles & Device Management`, tap your account under `Developer App`, tap `Trust '<your apple account email>'`, and confirm by tapping `Trust` again
 ![verify account](blog/2017-04-09-three-steps-to-run-application-on-your-apple-device-without-developer-account/03_d_verify_account.png "Verify account in your device")
 - Back at Xcode, press play button to build and run again
 - 🎉
