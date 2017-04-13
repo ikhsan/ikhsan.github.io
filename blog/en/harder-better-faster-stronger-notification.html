@@ -1,0 +1,426 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+    <title>Codeage - Harder, Better, Faster, Stronger Notification</title>
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/icon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/icon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/icon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/icon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/icon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/icon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/icon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png">
+    <link rel="manifest" href="/icon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/icon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link href="/stylesheets/all.css" rel="stylesheet" />
+  </head>
+  <body>
+
+    <div id="main" role="main">
+      <nav>
+  <h1 class="blog-title"><a href="/">Codeage</a></h1>
+  <p class="blog-description">
+    Pardon my ramblings about code and such
+  </p>
+  <div class="blog-lang">
+    <strong>English</strong> / <a href="/blog/id/harder-better-faster-stronger-notification.html">Bahasa Indonesia</a>
+  </div>
+</nav>
+
+
+      <article>
+        <h1>Harder, Better, Faster, Stronger Notification</h1>
+        <p>At work, we are rethinking ways to communicate changes from our models. The changes should be propagated to all interested classes. This sounds like the perfect use case for introducing new reactive libraries, but this is not an article on how to use fantastic reactive libraries. Instead, let me reintroduce to our old friends, <code>Notification</code> and <code>NotificationCenter</code>. </p>
+
+<h2>Requirements</h2>
+
+<p>In this article, I will share the requirements and my current design of the better version of <code>Notification</code>. Note that this is only for custom notifications. Supporting <code>UIKit</code>&rsquo;s notifications is out of this article&rsquo;s scope.</p>
+
+<p><img title="Harder better faster stronger" alt="harder_better" src="/blog/2017-03-26-harder-better-faster-stronger-notification/harder_better.jpg" /></p>
+
+<ul>
+<li><strong>Harder</strong> to make mistakes. No use for stringly-typed notification names.</li>
+<li><strong>Better</strong> compatibility with Objective-C. Our app is almost 5 year-old, it is important to keep it compatible with our old Objective-C classes.</li>
+<li><strong>Faster</strong> creation of posts and observers. Posting and observing changes should be fast and easy.</li>
+<li><strong>Stronger</strong> types. <code>Notification</code> has poor type information, you can put any class (or not) as the <code>object</code> and put any dictionary as its <code>userInfo</code>. Let&rsquo;s make a safer version with more type information.</li>
+</ul>
+
+<p><em>I know, these requirements was a bit forced. I made it up just to make my Daft Punk reference relevant.</em></p>
+
+<h2>1st Design: Swift Talk&rsquo;s design</h2>
+
+<p>My starting point was heavily based on someone&rsquo;s work. Chris and Florian from <a href="https://talk.objc.io">Swift Talk</a> fame have <a href="https://talk.objc.io/episodes/S01E27-typed-notifications-part-1">great</a> <a href="https://talk.objc.io/episodes/S01E28-typed-notifications-part-2">screencasts</a> (which you all should <a href="https://talk.objc.io/subscribe">subscribe</a>!) that teach viewers how to wrap <code>Notification</code> using protocols. The basic idea is that the protocol will require notification name and the object itself will be assigned as <code>Notification</code> object property.</p>
+<div class="highlight swift"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></td><td class="code"><pre>
+<span class="c1">// MARK: Design I</span>
+<span class="kd">protocol</span> <span class="kt">Notifiable</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="k">var</span> <span class="nv">notificationName</span><span class="p">:</span> <span class="kt">Notification</span><span class="o">.</span><span class="kt">Name</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">extension</span> <span class="kt">NotificationCenter</span> <span class="p">{</span>
+    <span class="kd">func</span> <span class="n">post</span><span class="o">&lt;</span><span class="kt">A</span><span class="p">:</span> <span class="kt">Notifiable</span><span class="o">&gt;</span><span class="p">(</span><span class="nv">notifiable</span><span class="p">:</span> <span class="kt">A</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">post</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">A</span><span class="o">.</span><span class="n">notificationName</span><span class="p">,</span> <span class="nv">object</span><span class="p">:</span> <span class="n">notifiable</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="kd">func</span> <span class="n">observe</span><span class="o">&lt;</span><span class="kt">A</span><span class="p">:</span> <span class="kt">Notifiable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">using</span> <span class="nv">block</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">A</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">NSObjectProtocol</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nf">addObserver</span><span class="p">(</span><span class="nv">forName</span><span class="p">:</span> <span class="kt">A</span><span class="o">.</span><span class="n">notificationName</span><span class="p">,</span> <span class="nv">object</span><span class="p">:</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">queue</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">notification</span> <span class="k">in</span>
+            <span class="k">if</span> <span class="k">let</span> <span class="nv">notif</span> <span class="o">=</span> <span class="n">notification</span><span class="o">.</span><span class="n">object</span> <span class="k">as?</span> <span class="kt">A</span> <span class="p">{</span>
+                <span class="nf">block</span><span class="p">(</span><span class="n">notif</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Let&rsquo;s make a simple example to explain its design and why it is better than <code>Notification</code>&rsquo;s API. Supposed that we have global counter in our app and we want to get the latest changes of our counter. We will make custom notification class called <code>CounterDidChangeNotification</code> that conforms to <code>Notifiable</code> protocol. We use class instead of struct because it will be used by Objective-C classes. Don&rsquo;t forget to <a href="/blog/en/how-to-name-your-notification.html">use good names for your notification</a>.</p>
+<div class="highlight swift"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></td><td class="code"><pre>
+<span class="c1">// MARK: Design I's call site</span>
+<span class="kd">final</span> <span class="kd">class</span> <span class="kt">CounterDidChangeNotification</span><span class="p">:</span> <span class="kt">NSObject</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">count</span><span class="p">:</span> <span class="kt">Int</span>
+    <span class="nf">init</span><span class="p">(</span><span class="n">_</span> <span class="nv">count</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">extension</span> <span class="kt">CounterDidChangeNotification</span><span class="p">:</span> <span class="kt">Notifiable</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="k">var</span> <span class="nv">notificationName</span><span class="p">:</span> <span class="kt">Notification</span><span class="o">.</span><span class="kt">Name</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kt">Notification</span><span class="o">.</span><span class="kt">Name</span><span class="p">(</span><span class="nv">rawValue</span><span class="p">:</span> <span class="s">"CounterDidChangeNotification"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// MARK: Post and observe 'CounterDidChangeNotification'</span>
+<span class="n">notificationCenter</span><span class="o">.</span><span class="nf">post</span><span class="p">(</span><span class="kt">CounterDidChangeNotification</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="n">notificationCenter</span><span class="o">.</span><span class="n">observe</span> <span class="p">{</span> <span class="p">(</span><span class="nv">notification</span><span class="p">:</span> <span class="kt">CounterDidChangeNotification</span><span class="p">)</span> <span class="k">in</span>
+    <span class="nf">print</span><span class="p">(</span><span class="s">"latest count </span><span class="se">\(</span><span class="n">notification</span><span class="o">.</span><span class="n">count</span><span class="se">)</span><span class="s">"</span><span class="p">)</span> <span class="c1">// will print "latest count 10"</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Our <code>Notification</code>s interface are more-typed and safer to <code>Foundation</code>&rsquo;s. When posting in using <code>Foundation</code>&rsquo;s interface (<code>post(name:object:)</code>), it needs its name to be manually put and its object can can be any type or even nil. Observing in <code>Foundation</code> is similarly tedious, it needs its name and then the block should process its <code>Notification</code> instance. The important info might be inside <code>object</code> or might be values inside <code>userInfo</code>.</p>
+
+<p>In our current design, when posting we just need to make a <code>Notifiable</code> instance and then post it. We don&rsquo;t need to care about naming or how to wrap the object. Moreover, observing feels almost magical since we only need to give information of the instance inside the block. Swift can derive which <code>Notifiable</code> instance the method is listening by looking at the type (in our case, it&rsquo;s <code>{ (notification: CounterDidChangeNotification) in ... }</code>). The names and how to unwrap the object will be taken care by our method.</p>
+
+<p>Very neat!<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup> 👏👏</p>
+
+<h2>2nd Design: Auto-naming</h2>
+
+<p>We can take the 1st design up a notch by deriving the name from the class name using protocol extension.</p>
+<div class="highlight swift"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</pre></td><td class="code"><pre><span class="c1">// MARK: Design II</span>
+<span class="kd">protocol</span> <span class="kt">Notifiable</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="k">var</span> <span class="nv">notificationName</span><span class="p">:</span> <span class="kt">Notification</span><span class="o">.</span><span class="kt">Name</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">extension</span> <span class="kt">Notifiable</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="k">var</span> <span class="nv">notificationName</span><span class="p">:</span> <span class="kt">Notification</span><span class="o">.</span><span class="kt">Name</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kt">Notification</span><span class="o">.</span><span class="kt">Name</span><span class="p">(</span><span class="kt">String</span><span class="p">(</span><span class="nv">describing</span><span class="p">:</span> <span class="k">self</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Our notification class won&rsquo;t need to give an explicit name anymore because it will use default implementation by using the class name as its notification name. Note that you can still override the implementation and give explicit name if needed.</p>
+
+<p>Now our <code>CounterDidChangeNotification</code> is simpler, we can start posting it just by conforming to <code>Notifiable</code> protocol.</p>
+<div class="highlight swift"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9</pre></td><td class="code"><pre><span class="c1">// MARK: Design II's call site</span>
+<span class="kd">final</span> <span class="kd">class</span> <span class="kt">CounterDidChangeNotification</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">Notifiable</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">count</span><span class="p">:</span> <span class="kt">Int</span>
+
+    <span class="nf">init</span><span class="p">(</span><span class="n">_</span> <span class="nv">count</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Now it&rsquo;s even easier to post notification class, great! 👍</p>
+
+<p><img title="great" alt="great" src="/blog/2017-03-26-harder-better-faster-stronger-notification/dp.gif" /></p>
+
+<h2>3rd Design: Needy old friend</h2>
+
+<p>Here comes the harder parts: Objective-C. Let&rsquo;s see our <code>NotificationCenter</code> extension inside our generated header file.</p>
+<div class="highlight objective_c"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2</pre></td><td class="code"><pre><span class="k">@interface</span> <span class="nc">NSNotificationCenter</span> <span class="p">(</span><span class="n">SWIFT_EXTENSION</span><span class="p">(</span><span class="n">Notification</span><span class="p">))</span>
+<span class="k">@end</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Can you see any of our extension methods? Exactly! Objective-C can&rsquo;t understand Swift&rsquo;s protocol extensions and generic methods. So how do we make our methods compatible to Objective-C classes?</p>
+
+<p>Firstly, we can make our <code>Notifiable</code> protocol to be a base class so that it will share its dynamic notification naming.</p>
+
+<p>Making your code compatible with Objective-C can sometimes feel like your going backwards. You might often heard that &ldquo;Don&rsquo;t use subclass if you don&rsquo;t want magic behaviours, use protocol extension all the way, etc&rdquo;. Subclassing is fine, nothing bad about using it. Subclassing is a great tool especially in our case because we care about compatibility and only have one level of subclassing.</p>
+<div class="highlight swift"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="c1">// MARK: Design III</span>
+<span class="kd">class</span> <span class="kt">Notifiable</span><span class="p">:</span> <span class="kt">NSObject</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="k">var</span> <span class="nv">notificationName</span><span class="p">:</span> <span class="kt">Notification</span><span class="o">.</span><span class="kt">Name</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kt">Notification</span><span class="o">.</span><span class="kt">Name</span><span class="p">(</span><span class="kt">String</span><span class="p">(</span><span class="nv">describing</span><span class="p">:</span> <span class="k">self</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Next step, we make our <code>post</code> method compatible with Objective-C. Let&rsquo;s ditch the generics and use our new <code>Notifiable</code> base class. The other method <code>observe</code> is trickier. Because Objective-C&rsquo;s generic support is limited, we pass the class&rsquo; type as a parameter and use that to check <code>Notification</code>&rsquo;s object. This interface is not as typed as its Swift&rsquo;s counterparts, but at least it is safe because the block won&rsquo;t get called with incorrect object.</p>
+
+<p>It works like an immigration officer, they compare visitor&rsquo;s visa and the current country, then allow them to pass the border if visitor has the correct visa. Similarly, we compare the name of <code>Notification</code>&rsquo;s object and the passed class&rsquo;s name from the parameter, then allow the object by passing it through the block if both has the same name.</p>
+<div class="highlight swift"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17</pre></td><td class="code"><pre><span class="c1">// MARK: Design III continued</span>
+<span class="kd">func</span> <span class="nf">post</span><span class="p">(</span><span class="nv">notifiable</span><span class="p">:</span> <span class="kt">Notifiable</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">post</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="nf">type</span><span class="p">(</span><span class="nv">of</span><span class="p">:</span> <span class="n">notifiable</span><span class="p">)</span><span class="o">.</span><span class="n">notificationName</span><span class="p">,</span> <span class="nv">object</span><span class="p">:</span> <span class="n">notifiable</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">observe</span><span class="p">(</span><span class="nv">classType</span><span class="p">:</span> <span class="kt">Notifiable</span><span class="o">.</span><span class="k">Type</span><span class="p">,</span> <span class="n">using</span> <span class="nv">block</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="kt">NSObjectProtocol</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nf">addObserver</span><span class="p">(</span><span class="nv">forName</span><span class="p">:</span> <span class="n">classType</span><span class="o">.</span><span class="n">notificationName</span><span class="p">,</span> <span class="nv">object</span><span class="p">:</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">queue</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">notification</span> <span class="k">in</span>
+
+        <span class="k">guard</span> <span class="k">let</span> <span class="nv">notificationObject</span> <span class="o">=</span> <span class="n">notification</span><span class="o">.</span><span class="n">object</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+        <span class="k">let</span> <span class="nv">expectedType</span> <span class="o">=</span> <span class="kt">String</span><span class="p">(</span><span class="nv">describing</span><span class="p">:</span> <span class="n">classType</span><span class="p">)</span>
+        <span class="k">let</span> <span class="nv">type</span> <span class="o">=</span> <span class="kt">String</span><span class="p">(</span><span class="nv">describing</span><span class="p">:</span> <span class="nf">type</span><span class="p">(</span><span class="nv">of</span><span class="p">:</span> <span class="n">notificationObject</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">expectedType</span> <span class="o">==</span> <span class="n">type</span>  <span class="p">{</span>
+            <span class="nf">block</span><span class="p">(</span><span class="n">notificationObject</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Now let&rsquo;s look back to our generated headers again, now we should see our methods in <code>NotificationCenter</code> extension!</p>
+<div class="highlight objective_c"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4</pre></td><td class="code"><pre><span class="k">@interface</span> <span class="nc">NSNotificationCenter</span> <span class="p">(</span><span class="n">SWIFT_EXTENSION</span><span class="p">(</span><span class="n">Notification</span><span class="p">))</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">postWithNotifiable</span><span class="o">:</span><span class="p">(</span><span class="n">Notifiable</span> <span class="o">*</span> <span class="p">)</span><span class="n">notifiable</span><span class="p">;</span>
+<span class="k">-</span> <span class="p">(</span><span class="n">id</span> <span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span><span class="p">)</span><span class="nf">observeWithClassType</span><span class="p">:(</span><span class="n">SWIFT_METATYPE</span><span class="p">(</span><span class="n">Notifiable</span><span class="p">))</span><span class="nv">classType</span> <span class="nf">using</span><span class="p">:(</span><span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">id</span><span class="p">))</span><span class="nv">block</span><span class="p">;</span>
+<span class="k">@end</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Last step, use our method extension by passing the class that we&rsquo;re interested in and force cast the <code>id</code> to that same class. Look closely on two appearances of <code>CounterDidChangeNotification</code>, one as parameter and one as the type inside the block.</p>
+<div class="highlight objective_c"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6</pre></td><td class="code"><pre><span class="c1">// MARK: Design III's call site
+</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">notificationCenter</span>
+    <span class="nf">observeWithClassType</span><span class="p">:</span><span class="n">CounterDidChangeNotification</span><span class="p">.</span><span class="n">class</span>
+    <span class="nf">using</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="n">CounterDidChangeNotification</span> <span class="o">*</span><span class="n">notification</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">NSLog</span><span class="p">(</span><span class="s">@"latest count %ld"</span><span class="p">,</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">notification</span><span class="p">.</span><span class="n">count</span><span class="p">)</span> <span class="c1">// will print "latest count 10"
+</span><span class="p">}];</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>Great! We have compatible interfaces to post and observe in both languages 🙌 I&rsquo;m pretty happy on this current design. There are gotchas that I would like remove but I don&rsquo;t know how. Let me know if you have more techniques to make <code>Notification</code> better to create and use. Rock on!</p>
+
+<p>To see it in action, I made a sample app that use this <code>Notification</code> design if needed: <strong>Notification sample</strong> (<a href="/blog/2017-03-26-harder-better-faster-stronger-notification/Notification.zip">zip</a>, <a href="https://github.com/ikhsan/ikhsan.github.io/tree/develop/source/blog/2017-03-26-harder-better-faster-stronger-notification/Notification/Notification">github</a>).</p>
+
+<hr>
+
+<h2>Gotchas</h2>
+
+<p>There are still 2 gotchas that I can&rsquo;t solve.</p>
+
+<h3>Compiler allows to pass all classes inside observe method</h3>
+
+<p>The compiler can&rsquo;t detect whether the class type is a subclass of <code>Notifiable</code> class or not. Although, the type of the class has been specified as <code>Notifiable.Type</code> but it is translated only as a <code>Class</code>. (Actually, it&rsquo;s <code>SWIFT_METATYPE(Notifiable)</code> which is a macro that translates into <code>Class</code>). So, that parameter can accept all classes like <code>NSString.class</code> or <code>NSData.class</code> without making the compiler complain.</p>
+
+<p>Is there a way to make compiler stricter by only allowing <code>Notifiable</code> class types?</p>
+
+<h3>Using string comparison is not really ideal, in objective-c it&rsquo;s easier</h3>
+
+<p>The way that I compare classes is by comparing via <code>String</code>&rsquo;s <code>describing:</code> init method. In Objective-C, I know I can just check classes by using <code>isKindOfClass:</code></p>
+<div class="highlight objective_c"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7</pre></td><td class="code"><pre><span class="k">-</span> <span class="p">(</span><span class="n">id</span> <span class="o">&lt;</span><span class="n">NSObject</span><span class="o">&gt;</span><span class="p">)</span><span class="nf">observeWithClassType</span><span class="p">:(</span><span class="n">Class</span><span class="p">)</span><span class="nv">classType</span> <span class="nf">using</span><span class="p">:(</span><span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">id</span> <span class="n">notification</span><span class="p">))</span><span class="nv">block</span> <span class="p">{</span>
+    <span class="c1">// ...
+</span>
+    <span class="k">if</span> <span class="p">([</span><span class="n">notificationObject</span> <span class="nf">isKindOfClass</span><span class="p">:</span><span class="n">classType</span><span class="p">])</span> <span class="p">{</span>
+        <span class="c1">// ...
+</span>    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>The same checks can&rsquo;t be done in Swift.</p>
+<div class="highlight swift"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td class="code"><pre><span class="kd">func</span> <span class="nf">observe</span><span class="p">(</span><span class="nv">classType</span><span class="p">:</span> <span class="kt">Notifiable</span><span class="o">.</span><span class="k">Type</span><span class="p">,</span> <span class="n">using</span> <span class="nv">block</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="kt">NSObjectProtocol</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+
+    <span class="c1">// Got "use of undeclared type 'classType'" error</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">notificationObject</span> <span class="k">is</span> <span class="n">classType</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table>
+</div>
+
+<p>I&rsquo;m fine using current comparison with <code>String</code>s, but I think it would be more ideal to check class types using Swift&rsquo;s <code>is</code>. Is this feasible in Swift?</p>
+
+<div class="footnotes">
+<hr>
+<ol>
+
+<li id="fn1">
+<p>That is their synchronised clapping as emoji&nbsp;<a href="#fnref1" rev="footnote">&#8617;</a></p>
+</li>
+
+</ol>
+</div>
+
+        <div class="metadata">
+          <div class="date">Mar.26 2017</div>
+              <a class="tag" href="/blog/tags/notification.html">notification</a>
+    <a class="tag" href="/blog/tags/objective-c.html">objective-c</a>
+    <a class="tag" href="/blog/tags/swift.html">swift</a>
+
+        </div>
+      </article>
+      
+<div class="article-links">
+  <div class="previous-link">
+    <a href="/blog/en/how-to-name-your-notification.html">&larr; How to Name Your Notification</a>
+  </div>
+
+  <div class="next-link">
+    <a href="/blog/en/three-steps-to-run-application-on-your-apple-device-without-developer-account.html">3 Steps to Run iOS App on Your Device Without Developer Account &rarr;</a>
+  </div>
+
+</div>
+
+
+      <footer>
+  <div class="footer-blog">
+    <p>I'm Ikhsan and this is my blog for my thoughts on codes and the likes. All other stuff are on my main blog, <a href="http://ikhsan.me">Lifeage</a>. Get in touch via Twitter <a href="http://twitter.com/ixnixnixn">@ixnixnixn</a> or email <a href="mailto:ikhsan.assaat@gmail.com">ikhsan.assaat@gmail.com</a>.</p>
+  </div>
+
+  <div class="footer-links">
+    <ul>
+      <li><a href="/articles.html">Articles</a></li>
+      <li><a href="http://ikhsan.me">Lifeage</a></li>
+      <li><a href="http://twitter.com/ixnixnixn">Twitter</a></li>
+      <li><a href="http://github.com/ikhsan">Github</a></li>
+    </ul>
+  </div>
+
+  <div class="copyright">
+    <p>&copy; <a href="https://github.com/ikhsan/ikhsan.github.io">Codeage</a> 2009–2017</p>
+  </div>
+</footer>
+
+    </div>
+
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12712252-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  </body>
+</html>

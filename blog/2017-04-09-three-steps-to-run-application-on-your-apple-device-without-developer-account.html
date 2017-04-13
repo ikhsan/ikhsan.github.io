@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+    <title>Codeage</title>
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed.xml" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/icon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/icon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/icon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/icon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/icon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/icon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/icon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png">
+    <link rel="manifest" href="/icon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/icon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link href="/stylesheets/all.css" rel="stylesheet" />
+  </head>
+  <body>
+
+    <div id="main" role="main">
+      <nav>
+  <h1 class="blog-title"><a href="/">Codeage</a></h1>
+  <p class="blog-description">
+    Pardon my ramblings about code and such
+  </p>
+  <div class="blog-lang">
+    <strong>English</strong> / <a href="/id/blog/2017-04-09-three-steps-to-run-application-on-your-apple-device-without-developer-account.html">Bahasa Indonesia</a>
+  </div>
+</nav>
+
+
+      <p>For people who started iOS development, running your app in the app simulator won&rsquo;t be the same as running on your own device. There are features that don&rsquo;t exist in the simulator (and it&rsquo;s harder to show to your friends what you&rsquo;ve made!). Luckily, it&rsquo;s free and easy to run your app on a physical device without a developer account. READMORE</p>
+
+<p>Here are the things that you need to prepare :</p>
+
+<ul>
+<li>💻 Mac OS machine running latest Xcode</li>
+<li>📱 Apple device (more recent ones the better)</li>
+<li>Apple account (the same account for downloading apps in the App Store)</li>
+<li>Your app (if you don&rsquo;t have one yourself, <a href="https://github.com/codebar/ios-tutorials/blob/master/introduction/tutorial.md">make a simple one</a>)</li>
+</ul>
+
+<h3>1. Add your account in Xcode</h3>
+
+<ul>
+<li>From the menubar, go to <code>Xcode &gt; Preferences...</code></li>
+<li>Click the <code>Accounts</code> tab (the second tab)</li>
+<li>On bottom left, press the + icon</li>
+<li>Select <code>Add Apple ID...</code></li>
+<li>Insert your Apple ID&rsquo;s credentials</li>
+</ul>
+
+<p><img title="Add your Apple ID" alt="add_apple_id" src="/blog/2017-04-09-three-steps-to-run-application-on-your-apple-device-without-developer-account/01_add_apple_id.png" /></p>
+
+<h3> 2. Configure your project&rsquo;s signing</h3>
+
+<ul>
+<li>Go to <code>Navigator</code> area, select <code>Project navigator</code> tab, select your project name</li>
+<li>Select your app target in the <code>Targets</code> tab</li>
+<li>In the <code>Signing</code> area, select your account as the team name</li>
+</ul>
+
+<p><img title="Select team" alt="select_team" src="/blog/2017-04-09-three-steps-to-run-application-on-your-apple-device-without-developer-account/02_select_team.png" /></p>
+
+<h3>3. Configure your device 📱</h3>
+
+<ul>
+<li>Plug your Apple device to your development machine (this will trigger Xcode to <a href="http://stackoverflow.com/a/19706886/851515">processes symbol files from your devices</a>, which will take a sometime)</li>
+<li>Instead of running on simulator, select your device instead
+<img title="Select your apple device" alt="select device" src="/blog/2017-04-09-three-steps-to-run-application-on-your-apple-device-without-developer-account/03_a_select_device.png" /></li>
+<li>Press the play button to run the app!</li>
+<li>Errm&hellip; not so fast. We need to allow codesign to access our keychain, press <code>Always Allow</code>
+<img title="Allow codesign to access keychain" alt="allow keychain" src="/blog/2017-04-09-three-steps-to-run-application-on-your-apple-device-without-developer-account/03_b_allow_keychain.png" /></li>
+<li>Almost there, you will be prompted to verify your account in your device
+<img title="Verify account developer" alt="verify alert" src="/blog/2017-04-09-three-steps-to-run-application-on-your-apple-device-without-developer-account/03_c_verify_alert.png" /></li>
+<li>Now on your iOS device, go to <code>Settings</code> &gt; <code>General</code> &gt; <code>Profiles &amp; Device Management</code>, tap your account under <code>Developer App</code>, tap <code>Trust &#39;&lt;your apple account email&gt;&#39;</code>, and confirm by tapping <code>Trust</code> again
+<img title="Verify account in your device" alt="verify account" src="/blog/2017-04-09-three-steps-to-run-application-on-your-apple-device-without-developer-account/03_d_verify_account.png" /></li>
+<li>Back at Xcode, press play button to build and run again</li>
+<li>🎉</li>
+</ul>
+
+<p>It&rsquo;s great to see that Apple makes it easy for us to try our app in our actual hands. Happy testing!</p>
+
+<hr>
+
+<p>I wrote this article as a pull request to enhance <a href="https://codebar.io">codebar</a>&rsquo;s awesome <a href="https://codebar.io/events/intro-to-ios">iOS workshop session</a> tutorial written by <a href="https://twitter.com/ynzc">Yvette Cook</a>.</p>
+
+
+      <footer>
+  <div class="footer-blog">
+    <p>I'm Ikhsan and this is my blog for my thoughts on codes and the likes. All other stuff are on my main blog, <a href="http://ikhsan.me">Lifeage</a>. Get in touch via Twitter <a href="http://twitter.com/ixnixnixn">@ixnixnixn</a> or email <a href="mailto:ikhsan.assaat@gmail.com">ikhsan.assaat@gmail.com</a>.</p>
+  </div>
+
+  <div class="footer-links">
+    <ul>
+      <li><a href="/articles.html">Articles</a></li>
+      <li><a href="http://ikhsan.me">Lifeage</a></li>
+      <li><a href="http://twitter.com/ixnixnixn">Twitter</a></li>
+      <li><a href="http://github.com/ikhsan">Github</a></li>
+    </ul>
+  </div>
+
+  <div class="copyright">
+    <p>&copy; <a href="https://github.com/ikhsan/ikhsan.github.io">Codeage</a> 2009–2017</p>
+  </div>
+</footer>
+
+    </div>
+
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-12712252-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  </body>
+</html>
